@@ -96,6 +96,7 @@ def connect_db(host1, dbname1, port1, user1, password1,host2, dbname2, port2, us
     s_schema_number,c_schema_number,schema_count=0,0,0
      
     if len(s_schema)!=len(c_schema):
+        schema_count=schema_count+1
         print('The number of schemas in those two databases are not matching')
     else:
         while s_schema_number<len(s_schema):
@@ -110,12 +111,12 @@ def connect_db(host1, dbname1, port1, user1, password1,host2, dbname2, port2, us
                     c_schema_number=c_schema_number+1
                 elif s_schema[s_schema_number]!=c_schema[c_schema_number] and (c_schema_number+1)>=len(c_schema) and (s_schema_number+1)<len(s_schema):
                     schema_count=schema_count+1
-                    print('The schema %s can not be found in database %s\n'%(s_schema[s_schema_number],dbname2))
+                    print('The schema %r can not be found in database %r\n'%(s_schema[s_schema_number],dbname2))
                     s_schema_number=s_schema_number+1
                     c_schema_number=0
                 elif s_schema[s_schema_number]!=c_schema[c_schema_number] and (c_schema_number+1)>=len(c_schema) and (s_schema_number+1)>=len(s_schema):
                     schema_count=schema_count+1
-                    print('The schema %s can not be found in database %s\n'%(s_schema[s_schema_number],dbname2))
+                    print('The schema %r can not be found in database %r\n'%(s_schema[s_schema_number],dbname2))
                     s_schema_number,c_schema_number=0,0
                     break
             break
@@ -132,22 +133,20 @@ def connect_db(host1, dbname1, port1, user1, password1,host2, dbname2, port2, us
                     s_schema_number=s_schema_number+1
                 elif c_schema[c_schema_number]!=s_schema[s_schema_number] and (s_schema_number+1)>=len(s_schema) and (c_schema_number+1)<len(c_schema):
                     schema_count=schema_count+1
-                    print('The schema %s can not be found in database %s\n'%(c_schema[c_schema_number],dbname1))
+                    print('The schema %r can not be found in database %r\n'%(c_schema[c_schema_number],dbname1))
                     c_schema_number=c_schema_number+1
                     s_schema_number=0
                 elif c_schema[c_schema_number]!=s_schema[s_schema_number] and (s_schema_number+1)>=len(s_schema) and (c_schema_number+1)>=len(c_schema):
                     schema_count=schema_count+1
-                    print('The schema %s can not be found in database %s\n'%(c_schema[c_schema_number],dbname1))
+                    print('The schema %r can not be found in database %r\n'%(c_schema[c_schema_number],dbname1))
                     s_schema_number,c_schema_number=0,0
                     break
             break
         
     s_schema_table_number,c_schema_table_number,schema_table_count,count=0,0,0,0
     
-    if schema_count!=0:
-        print('The schema of those two databases are not matching\n')
-    else:
-        print('The schema of those two databases might be matching\n')
+    if schema_count==0:
+#         print('The schema of those two databases might be matching\n')
         for s in s_schema:
             s_schema_table_number,c_schema_table_number,schema_table_count=0,0,0
             cursor1.execute('select tablename as table from pg_tables where schemaname = \'%s\';'%s[0])
@@ -157,7 +156,7 @@ def connect_db(host1, dbname1, port1, user1, password1,host2, dbname2, port2, us
             c_schema_table=cursor2.fetchall()
             
             if len(s_schema_table)!=len(c_schema_table):
-                print('The number of tables in schema %s are not matching \n'%s[0])
+                print('The number of tables in schema %r are not matching \n'%s[0])
                 count=count+1
             else:
                 while s_schema_table_number<len(s_schema_table):
@@ -172,12 +171,12 @@ def connect_db(host1, dbname1, port1, user1, password1,host2, dbname2, port2, us
                             c_schema_table_number=c_schema_table_number+1
                         elif s_schema_table[s_schema_table_number]!=c_schema_table[c_schema_table_number] and (c_schema_table_number+1)>=len(c_schema_table) and (s_schema_table_number+1)<len(s_schema_table):
                             schema_table_count=schema_table_count+1
-                            print('In schema \'%s\' database \'%s\', the table \'%s\' can not be found\n'%(s[0],dbname2,s_schema_table[s_schema_table_number][0]))
+                            print('In schema %r database %r, the table %r can not be found\n'%(s[0],dbname2,s_schema_table[s_schema_table_number][0]))
                             s_schema_table_number=s_schema_table_number+1
                             c_schema_table_number=0
                         elif s_schema_table[s_schema_table_number]!=c_schema_table[c_schema_table_number] and (c_schema_table_number+1)>=len(c_schema_table) and (s_schema_table_number+1)>=len(s_schema_table):
                             schema_table_count=schema_table_count+1
-                            print('In schema \'%s\' database \'%s\', the table \'%s\' can not be found\n'%(s[0],dbname2,s_schema_table[s_schema_table_number][0]))
+                            print('In schema %r database %r, the table %r can not be found\n'%(s[0],dbname2,s_schema_table[s_schema_table_number][0]))
                             s_schema_table_number,c_schema_table_number=0,0
                             break
                     break
@@ -194,17 +193,17 @@ def connect_db(host1, dbname1, port1, user1, password1,host2, dbname2, port2, us
                             s_schema_table_number=s_schema_table_number+1
                         elif c_schema_table[c_schema_table_number]!=s_schema_table[s_schema_table_number] and (s_schema_table_number+1)>=len(s_schema_table) and (c_schema_table_number+1)<len(c_schema_table):
                             schema_table_count=schema_table_count+1
-                            print('In schema \'%s\' database \'%s\', the table \'%s\' can not be found\n'%(s[0],dbname1,c_schema_table[c_schema_table_number][0]))
+                            print('In schema %r database %r, the table %r can not be found\n'%(s[0],dbname1,c_schema_table[c_schema_table_number][0]))
                             c_schema_table_number=c_schema_table_number+1
                             s_schema_table_number=0
                         elif c_schema_table[c_schema_table_number]!=s_schema_table[s_schema_table_number] and (s_schema_table_number+1)>=len(s_schema_table) and (c_schema_table_number+1)>=len(c_schema_table):
                             schema_table_count=schema_table_count+1
-                            print('In schema \'%s\' database \'%s\', the table \'%s\' can not be found\n'%(s[0],dbname1,c_schema_table[c_schema_table_number][0]))
+                            print('In schema %r database %r, the table %r can not be found\n'%(s[0],dbname1,c_schema_table[c_schema_table_number][0]))
                             s_schema_table_number,c_schema_table_number=0,0
                             break
                     if schema_table_count!=0:
                         count=count+1
-                        print('In schema %s, the tables are not matching\n'%s[0])
+#                         print('In schema %s, the tables are not matching\n'%s[0])
                         break
                     else:
                         break
@@ -212,11 +211,12 @@ def connect_db(host1, dbname1, port1, user1, password1,host2, dbname2, port2, us
     table_count=0
                 
     if count!=0:
-        print('The tables in those schemas are not matching\n')
+#         print('The tables in those schemas are not matching\n')
         table_count=table_count+1
-    else:
-        print('The tables in those schemas might be matching\n')
-         
+    elif count==0 and schema_count!=0:
+        table_count=table_count+1
+    elif count==0 and schema_count==0:
+#         print('The tables in those schemas might be matching\n')         
         for s_s in s_schema:
             cursor1.execute('select tablename as table from pg_tables where schemaname = \'%s\';'%s_s[0])
             s_schema_table=cursor1.fetchall()
@@ -250,7 +250,7 @@ def table_schema_compare(s,t,s_columns,s_columns_infor,c_columns,c_columns_infor
     x,i,count,sign=0,0,0,0
      
     if c_columns!=s_columns:
-        print('For schema \'%s\' table \'%s\', the number of columns are not matching!\n'%(s,t))
+        print('For schema %r table %r, the number of columns are not matching!\n'%(s,t))
         return False
     else:
         while x<len(s_columns_infor):
@@ -277,7 +277,7 @@ def table_schema_compare(s,t,s_columns,s_columns_infor,c_columns,c_columns_infor
                         i=i+1
                         count=0
                     else:
-                        print('For schema \'%s\' table \'%s\', there is no matching column %r in compared table\n'%(s,t,s_columns_infor[x]))
+                        print('For schema %r table %r, there is no matching column %r in compared table\n'%(s,t,s_columns_infor[x]))
                         sign=sign+1
                         if (x+1)<len(s_columns_infor):
                             x=x+1
