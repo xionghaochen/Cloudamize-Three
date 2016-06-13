@@ -96,7 +96,7 @@ def connect_db(host1, dbname1, port1, user1, password1,host2, dbname2, port2, us
     s_schema_number,c_schema_number,schema_count=0,0,0
      
     if len(s_schema)!=len(c_schema):
-        print('The number of schemas are not matching')
+        print('The number of schemas in those two databases are not matching')
     else:
         while s_schema_number<len(s_schema):
             while c_schema_number<len(c_schema):
@@ -145,9 +145,9 @@ def connect_db(host1, dbname1, port1, user1, password1,host2, dbname2, port2, us
     s_schema_table_number,c_schema_table_number,schema_table_count,count=0,0,0,0
     
     if schema_count!=0:
-        print('The schemas of those two databases are not matching\n')
+        print('The schema of those two databases are not matching\n')
     else:
-        print('The schemas of those two databases might be matching\n')
+        print('The schema of those two databases might be matching\n')
         for s in s_schema:
             s_schema_table_number,c_schema_table_number,schema_table_count=0,0,0
             cursor1.execute('select tablename as table from pg_tables where schemaname = \'%s\';'%s[0])
@@ -223,23 +223,15 @@ def connect_db(host1, dbname1, port1, user1, password1,host2, dbname2, port2, us
             for s_t in s_schema_table:
                 cursor1.execute('select count(*) from information_schema.columns where table_name=\'%s\''%s_t[0])
                 s_columns=cursor1.fetchall()
-#                 print('s_columns=',s_columns)
                  
                 cursor1.execute('select column_name,data_type from information_schema.columns where table_name=\'%s\''%s_t[0])
                 s_columns_infor=cursor1.fetchall()
-#                 print('s_columns_infor=',s_columns_infor)
-#                 print('len(s_columns_infor)=',len(s_columns_infor))
                  
                 cursor2.execute('select count(*) from information_schema.columns where table_name=\'%s\''%s_t[0])
                 c_columns=cursor2.fetchall()
-#                 print('c_columns=',c_columns)
-#                 if c_columns==s_columns:
-#                     print('True')
                  
                 cursor2.execute('select column_name,data_type from information_schema.columns where table_name=\'%s\''%s_t[0])
                 c_columns_infor=cursor2.fetchall()
-#                 print('c_columns_infor=',c_columns_infor)
-#                 print('len(c_columns_infor)=',len(c_columns_infor))
                  
                 if table_schema_compare(s_s[0],s_t[0],s_columns, s_columns_infor, c_columns, c_columns_infor):
                     continue
